@@ -1,0 +1,29 @@
+{
+  "name": "traceneuro",
+  "version": "0.1.0",
+  "description": "TraceNeuro - Cognitive Authenticity Engine",
+  "private": true,
+  "workspaces": [
+    "web"
+  ],
+  "scripts": {
+    "dev:api": "cd api && uvicorn main:app --reload",
+    "dev:web": "cd web && npm run dev",
+    "test": "pytest tests/",
+    "lint": "black . && flake8 .",
+    "setup": "./setup.sh"
+  },
+  "keywords": [
+    "ai-detection",
+    "cognitive-authenticity",
+    "nlp",
+    "stylometry"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
+

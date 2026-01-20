@@ -1,0 +1,1 @@
+"""Coherence break detection module"""

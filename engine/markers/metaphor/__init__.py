@@ -1,0 +1,1 @@
+"""Metaphor rarity analysis module"""

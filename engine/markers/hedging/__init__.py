@@ -1,0 +1,1 @@
+"""Hedging language detection module"""
