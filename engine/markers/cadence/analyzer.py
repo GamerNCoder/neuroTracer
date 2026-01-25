@@ -50,10 +50,25 @@ class CadenceAnalyzer:
         rhythm_variance = np.var(rhythm_scores) if len(rhythm_scores) > 1 else 0.0
         
         # Normalize variances (heuristic thresholds)
-        normalized_length_var = min(1.0, length_variance / 2000.0)
-        normalized_word_var = min(1.0, word_variance / 100.0)
+        # Adjusted for both formal and casual texts
+        # Use adaptive thresholds based on text length
+        avg_length = np.mean(sentence_lengths) if sentence_lengths else 0
+        avg_words = np.mean(word_counts) if word_counts else 0
+        
+        # Adaptive thresholds: lower for shorter texts (casual), higher for longer (formal)
+        length_threshold = max(20.0, min(2000.0, avg_length * 20))  # 20-2000 range (lowered min)
+        word_threshold = max(2.0, min(100.0, avg_words * 5))  # 2-100 range (lowered min)
+        
+        normalized_length_var = min(1.0, length_variance / length_threshold)
+        normalized_word_var = min(1.0, word_variance / word_threshold)
         normalized_pause_var = min(1.0, pause_variance / 2.0)
         normalized_rhythm_var = min(1.0, rhythm_variance / 0.1)
+        
+        # For very short texts, give baseline score if there's any variation at all
+        if avg_words < 5 and (length_variance > 0 or word_variance > 0):
+            baseline_bonus = 0.3  # Boost for casual short texts with any variation
+        else:
+            baseline_bonus = 0.0
         
         # Combine metrics (weighted average)
         cadence_score = (
@@ -61,7 +76,10 @@ class CadenceAnalyzer:
             normalized_word_var * 0.3 +
             normalized_pause_var * 0.2 +
             normalized_rhythm_var * 0.2
-        )
+        ) + baseline_bonus
+        
+        # Cap at 1.0
+        cadence_score = min(1.0, cadence_score)
         
         return {
             "cadence_score": float(cadence_score),

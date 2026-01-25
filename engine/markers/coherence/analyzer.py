@@ -22,6 +22,12 @@ class CoherenceAnalyzer:
             r"\b(let\s+me\s+think|actually|come\s+to\s+think)",
             r"\b(on\s+second\s+thought|then\s+again)",
             r"\b(nevermind|scratch\s+that)",
+            # Casual conversation breaks
+            r"\b(yeah|yep|nah|nope)",
+            r"\b(like|um|uh|er)",
+            r"\b(you\s+know|ya\s+know)",
+            r"\b(i\s+mean|i\s+guess)",
+            r"\b(so|anyway|alright)",
         ]
         
         # Topic shift indicators

@@ -120,7 +120,7 @@ def save_scoring_history(
         text_preview=text_preview,
         humanscore=humanscore,
         breakdown=breakdown,
-        metadata=metadata
+        full_metadata=metadata
     )
     
     db.add(record)

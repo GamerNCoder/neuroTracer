@@ -37,6 +37,12 @@ class HedgingDetector:
             r"(more\s+or\s+less)",
             r"(to\s+some\s+extent)",
             r"(in\s+a\s+way)",
+            # Casual conversation patterns
+            r"(i\s+guess|i\s+mean|i\s+dunno|i\s+don'\s*t\s+know)",
+            r"(you\s+know|ya\s+know|y'\s*know)",
+            r"(like|um|uh|er)",
+            r"(maybe|perhaps|probably)",
+            r"(hows|how\s+is|how\s+are)",
         ]
     
     def detect(self, text: str, sentences: List[str]) -> Dict[str, Any]:

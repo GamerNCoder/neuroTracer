@@ -10,6 +10,7 @@ from engine.preprocessing.text_processor import TextProcessor
 from engine.humanscore.scorer import HumanScoreEngine
 from api.database import get_db
 from api.routes.history import save_scoring_history
+from api.utils.logger import get_logger
 
 router = APIRouter()
 
@@ -41,6 +42,9 @@ async def score_text(
     Returns a score between 0 (AI-generated) and 1 (human-written),
     along with detailed breakdown of cognitive markers.
     """
+    logger = get_logger()
+    error = None
+    
     try:
         # Preprocess text
         processor = TextProcessor()
@@ -59,6 +63,17 @@ async def score_text(
             db=db
         )
         
+        # Log to JSONL file
+        logger.log_scoring_request(
+            text=request.text,
+            result={
+                "humanscore": result["humanscore"],
+                "breakdown": result["breakdown"],
+                "metadata": result["metadata"]
+            },
+            request_options=request.options
+        )
+        
         return ScoreResponse(
             humanscore=result["humanscore"],
             breakdown=result["breakdown"],
@@ -66,5 +81,13 @@ async def score_text(
         )
     
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Scoring failed: {str(e)}")
+        error = str(e)
+        # Log error to JSONL
+        logger.log_scoring_request(
+            text=request.text,
+            result={},
+            request_options=request.options,
+            error=error
+        )
+        raise HTTPException(status_code=500, detail=f"Scoring failed: {error}")
 

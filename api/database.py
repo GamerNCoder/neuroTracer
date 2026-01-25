@@ -20,7 +20,7 @@ class ScoringHistory(Base):
     text_preview = Column(String(500))  # First 500 chars
     humanscore = Column(Float)
     breakdown = Column(JSON)  # Store marker breakdown as JSON
-    metadata = Column(JSON)  # Store full metadata as JSON
+    full_metadata = Column(JSON)  # Store full metadata as JSON (renamed from 'metadata' - SQLAlchemy reserved)
     created_at = Column(DateTime, default=datetime.utcnow)
     
     def __repr__(self):
