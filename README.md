@@ -1,8 +1,4 @@
-# 📘 **README.md — TraceNeuro / Cognitive Authenticity Engine (Working Name)**
-
-*(Working namespace: traceneuro/core — final brand TBD)*
-
----
+# 📘 **TraceNeuro (Cognitive Authenticity Engine)**
 
 ## 📚 **Complete Platform Documentation**
 
@@ -141,58 +137,6 @@ neurotrace/
   ├── docs/
   └── tests/
 ```
-
----
-
-# 📅 **Roadmap (Realistic, Non-Bullshit)**
-
-## **Phase 0 — Foundations (Week 1–2)**
-
-* Setup repository + monorepo tooling
-* Implement preprocessing engine
-* Implement basic API
-* Collect 500 human samples (pre-2012 blogs, Reddit 2009–2012, diary corpora)
-
-## **Phase 1 — Cognitive Marker MVP (Week 3–6)**
-
-* Build semantic drift extractor
-* Build cadence variance module
-* Build hedging detector
-* Build metaphor rarity counter
-* Build coherence break detector
-* Build stylometric fingerprint graphs
-
-## **Phase 2 — Fusion Layer + HumanScore (Week 6–8)**
-
-* Weight markers
-* Normalize marker distributions
-* Hybrid score integration
-* HumanScore™ v1
-
-## **Phase 3 — UI + API Launch (Week 8–10)**
-
-* Minimal dashboard
-* Upload or paste-box
-* JSON API endpoints
-* Save scoring history
-* Export reports
-
-## **Phase 4 — Hybrid Detection Engine (Week 10–12)**
-
-* Build training set (Human→AI→Human)
-* Classify hybrid segments
-* Add hybrid index to HumanScore™
-
-## **Phase 5 — V1 (3–6 months)**
-
-* Scaling
-* Caching
-* Deep reporting
-* Team mode
-* Audit logs
-* Enterprise API
-* Model fine-tuning on custom corpora
-
 ---
 
 # 🧩 **Core Algorithms (High-level)**
@@ -224,40 +168,6 @@ Humans change direction mid-thought; AI rarely does.
 Individual cognitive "voiceprint" extracted as a graph.
 
 Weighted and fused → HumanScore™.
-
----
-
-# 🔨 **Initial Commit Layout (copy-paste this into your GitHub project board)**
-
-### **Commit 1:** initialize monorepo, license, readme
-
-### **Commit 2:** add preprocessing pipeline
-
-### **Commit 3:** implement text cleaning & segmentation
-
-### **Commit 4:** add drift module (baseline)
-
-### **Commit 5:** add cadence analysis module
-
-### **Commit 6:** add hedging detector
-
-### **Commit 7:** metaphor rarity counter
-
-### **Commit 8:** coherence break graph
-
-### **Commit 9:** stylometric extractor
-
-### **Commit 10:** embeddings + feature encoder
-
-### **Commit 11:** fusion model (HumanScore)
-
-### **Commit 12:** first API endpoints
-
-### **Commit 13:** web UI scaffolding (Next.js)
-
-### **Commit 14:** scoring history database
-
-### **Commit 15:** deploy to Vercel (internal)
 
 ---
 
