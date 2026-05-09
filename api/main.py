@@ -4,7 +4,7 @@ TraceNeuro API - Main FastAPI Application
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import scoring, history
+from api.routes import scoring, history, batch
 from api.database import init_db
 
 app = FastAPI(
@@ -30,6 +30,7 @@ app.add_middleware(
 # Include routers
 app.include_router(scoring.router, prefix="/api/v1", tags=["scoring"])
 app.include_router(history.router, prefix="/api/v1", tags=["history"])
+app.include_router(batch.router, prefix="/api/v1", tags=["batch"])
 
 
 @app.get("/")
@@ -51,7 +52,10 @@ async def health():
         "version": "0.1.0",
         "endpoints": {
             "score": "/api/v1/score",
-            "health": "/health"
+            "batch_files": "/api/v1/score/batch/files",
+            "batch_paths": "/api/v1/score/batch/paths",
+            "config": "/api/v1/config",
+            "health": "/health",
         }
     }
 
