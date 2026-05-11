@@ -1,0 +1,11 @@
+{
+  "name": "NeuroTracer",
+  "short_name": "NeuroTracer",
+  "description": "Writing style marker explorer for the NeuroTracer analysis stack.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "lang": "en",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a"
+}
