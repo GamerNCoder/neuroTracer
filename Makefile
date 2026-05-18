@@ -1,4 +1,4 @@
-.PHONY: help setup dev-api dev-web test lint clean
+.PHONY: help setup dev-api dev-web test lint clean scrape-blogs
 
 help:
 	@echo "TraceNeuro Development Commands"
@@ -6,6 +6,7 @@ help:
 	@echo "  make setup      - Run initial setup (install dependencies)"
 	@echo "  make dev-api    - Start FastAPI server"
 	@echo "  make dev-web    - Start Next.js web dashboard"
+	@echo "  make scrape-blogs - Scrape pre-2012 blogs (20×25 via Wayback)"
 	@echo "  make test       - Run tests"
 	@echo "  make lint       - Run linters"
 	@echo "  make clean      - Clean build artifacts"
@@ -18,6 +19,9 @@ dev-api:
 
 dev-web:
 	@cd web && npm run dev
+
+scrape-blogs:
+	@python3 scripts/scrape_pre2012_blogs.py
 
 test:
 	@pytest tests/ -v
