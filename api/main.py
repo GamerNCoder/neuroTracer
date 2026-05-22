@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import scoring, history, batch
 from api.database import init_db
+from api.cors_settings import cors_allow_origins
 
 app = FastAPI(
     title="TraceNeuro API",
@@ -21,7 +22,7 @@ async def startup_event():
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure appropriately for production
+    allow_origins=cors_allow_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
