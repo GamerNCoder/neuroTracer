@@ -28,6 +28,12 @@ class ScoreResponse(BaseModel):
     """Response model for text scoring"""
     humanscore: float = Field(..., ge=0.0, le=1.0, description="HumanScore (0-1)")
     breakdown: Dict[str, float] = Field(..., description="Per-marker breakdown")
+    classification: str = Field(
+        ...,
+        description="likely_human | likely_ai | uncertain",
+    )
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence in classification")
+    calibrated: bool = Field(..., description="Whether blog-trained calibration is active")
     metadata: Dict[str, Any] = Field(..., description="Additional metadata")
 
 
@@ -77,7 +83,10 @@ async def score_text(
         return ScoreResponse(
             humanscore=result["humanscore"],
             breakdown=result["breakdown"],
-            metadata=result["metadata"]
+            classification=result["classification"],
+            confidence=result["confidence"],
+            calibrated=result["calibrated"],
+            metadata=result["metadata"],
         )
     
     except Exception as e:

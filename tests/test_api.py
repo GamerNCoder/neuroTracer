@@ -38,8 +38,12 @@ def test_score_endpoint():
     data = response.json()
     assert "humanscore" in data
     assert "breakdown" in data
+    assert "classification" in data
+    assert "confidence" in data
+    assert "calibrated" in data
     assert "metadata" in data
     assert 0.0 <= data["humanscore"] <= 1.0
+    assert data["classification"] in ("likely_human", "likely_ai", "uncertain")
 
 
 def test_score_endpoint_short_text():

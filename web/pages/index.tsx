@@ -161,7 +161,7 @@ export default function Home() {
       content = `TraceNeuro Analysis Report\n`;
       content += `========================\n\n`;
       content += `Overall HumanScore: ${(result.humanscore * 100).toFixed(2)}%\n`;
-      content += `Classification: ${getScoreLabel(result.humanscore)}\n\n`;
+      content += `Classification: ${getScoreLabel(result.humanscore, result)}\n\n`;
       content += `Marker Breakdown:\n`;
       Object.entries(result.breakdown).forEach(([key, value]) => {
         const info = MARKER_INFO[key] || { label: key, description: '' };
@@ -194,7 +194,7 @@ export default function Home() {
       content += `Generated: ${new Date().toLocaleString()}\n`;
       content += `========================\n\n`;
       content += `Overall HumanScore: ${(result.humanscore * 100).toFixed(2)}%\n`;
-      content += `Classification: ${getScoreLabel(result.humanscore)}\n\n`;
+      content += `Classification: ${getScoreLabel(result.humanscore, result)}\n\n`;
       content += `Marker Breakdown:\n`;
       Object.entries(result.breakdown).forEach(([key, value]) => {
         const info = MARKER_INFO[key] || { label: key, description: '' };
@@ -245,7 +245,19 @@ export default function Home() {
     return darkMode ? '#ef4444' : '#ef4444';
   };
 
-  const getScoreLabel = (score: number): string => {
+  const getScoreLabel = (score: number, apiResult?: { classification?: string; calibrated?: boolean; confidence?: number }): string => {
+    if (apiResult?.classification) {
+      const map: Record<string, string> = {
+        likely_human: 'Likely Human',
+        likely_ai: 'Likely AI',
+        uncertain: 'Uncertain / Hybrid',
+      };
+      const base = map[apiResult.classification] || apiResult.classification;
+      if (apiResult.calibrated && apiResult.confidence != null) {
+        return `${base} (${(apiResult.confidence * 100).toFixed(0)}% conf, blog-trained)`;
+      }
+      return base;
+    }
     if (score >= 0.7) return 'Likely Human';
     if (score >= 0.4) return 'Uncertain/Hybrid';
     return 'Likely AI';
@@ -617,7 +629,7 @@ export default function Home() {
                     fontWeight: '600',
                     marginBottom: '1rem'
                   }}>
-                    {getScoreLabel(result.humanscore)}
+                    {getScoreLabel(result.humanscore, result)}
                   </div>
                   <div style={{ 
                     width: '100%', 
@@ -780,7 +792,7 @@ export default function Home() {
                     fontWeight: '600',
                     marginBottom: '1rem'
                   }}>
-                    {getScoreLabel(result2.humanscore)}
+                    {getScoreLabel(result2.humanscore, result2)}
                   </div>
                   <div style={{ 
                     width: '100%', 

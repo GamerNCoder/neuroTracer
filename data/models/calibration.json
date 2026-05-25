@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "trained_at": "2026-05-25T02:31:24.184726+00:00",
+  "source": "blogs-pre2012 + synthetic-ai",
+  "human_samples": 270,
+  "ai_samples": 270,
+  "threshold": 0.48,
+  "logistic": {
+    "intercept": -3.370922,
+    "coefficients": {
+      "drift": 0.0077,
+      "cadence": 4.271204,
+      "hedging": -1.053351,
+      "metaphor": 0.312566,
+      "coherence": 5.137432,
+      "stylometry": 0.051738
+    }
+  },
+  "marker_weights": {
+    "drift": 0.0007,
+    "cadence": 0.3942,
+    "hedging": 0.0972,
+    "metaphor": 0.0289,
+    "coherence": 0.4742,
+    "stylometry": 0.0048
+  },
+  "marker_means_human": {
+    "drift": 1.0,
+    "cadence": 0.7121,
+    "hedging": 0.2289,
+    "metaphor": 0.7873,
+    "coherence": 0.1119,
+    "stylometry": 1.0
+  },
+  "marker_means_ai": {
+    "drift": 1.0,
+    "cadence": 0.6499,
+    "hedging": 0.2474,
+    "metaphor": 0.7794,
+    "coherence": 0.0465,
+    "stylometry": 0.9979
+  },
+  "metrics": {
+    "accuracy": 0.8889,
+    "f1_human": 0.8909,
+    "roc_auc": 0.9342,
+    "test_size": 108,
+    "train_size": 432
+  }
+}

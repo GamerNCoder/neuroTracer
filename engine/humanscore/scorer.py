@@ -3,7 +3,10 @@ HumanScore Engine - Main scoring logic
 Fuses multiple cognitive markers into a single HumanScore™
 """
 
-from typing import Dict, Any
+from pathlib import Path
+from typing import Dict, Any, Optional
+
+from engine.humanscore.calibration import CalibrationModel, load_calibration
 from engine.markers.drift.analyzer import DriftAnalyzer
 from engine.markers.cadence.analyzer import CadenceAnalyzer
 from engine.markers.hedging.detector import HedgingDetector
@@ -18,17 +21,28 @@ class HumanScoreEngine:
     into a unified HumanScore™ (0-1 scale)
     """
     
-    def __init__(self):
-        # Marker weights (will be tuned based on validation)
+    def __init__(
+        self,
+        *,
+        use_calibration: bool = True,
+        calibration_path: Optional[Path] = None,
+    ):
+        self.calibration: Optional[CalibrationModel] = None
+        if use_calibration:
+            self.calibration = load_calibration(calibration_path)
+
+        # Default heuristic weights; overridden when calibration is loaded
         self.weights = {
             "drift": 0.20,
             "cadence": 0.15,
             "hedging": 0.15,
             "metaphor": 0.10,
             "coherence": 0.20,
-            "stylometry": 0.20
+            "stylometry": 0.20,
         }
-        
+        if self.calibration and self.calibration.marker_weights:
+            self.weights = dict(self.calibration.marker_weights)
+
         # Initialize marker analyzers
         self.drift_analyzer = DriftAnalyzer()
         self.cadence_analyzer = CadenceAnalyzer()
@@ -78,22 +92,41 @@ class HumanScoreEngine:
             "stylometry": stylometry_result["stylometry_score"]
         }
         
-        # Weighted fusion
-        humanscore = sum(
-            marker_scores[marker] * self.weights[marker]
-            for marker in marker_scores
-        )
-        
+        breakdown = {
+            marker: round(score, 4) for marker, score in marker_scores.items()
+        }
+
+        if self.calibration:
+            prob_human = self.calibration.predict_proba_human(breakdown)
+            humanscore = prob_human
+            classification = self.calibration.classify(prob_human)
+            confidence = self.calibration.confidence(prob_human)
+        else:
+            humanscore = sum(
+                breakdown[m] * self.weights[m] for m in breakdown
+            )
+            classification = (
+                "likely_human"
+                if humanscore >= 0.6
+                else "likely_ai"
+                if humanscore <= 0.4
+                else "uncertain"
+            )
+            confidence = round(min(1.0, abs(humanscore - 0.5) * 2), 4)
+
         return {
             "humanscore": round(humanscore, 4),
-            "breakdown": {
-                marker: round(score, 4)
-                for marker, score in marker_scores.items()
-            },
+            "breakdown": breakdown,
+            "classification": classification,
+            "confidence": confidence,
+            "calibrated": self.calibration is not None,
             "metadata": {
                 "sentence_count": processed_text["sentence_count"],
                 "token_count": processed_text["token_count"],
                 "char_count": processed_text["char_count"],
+                "calibration_version": (
+                    self.calibration.version if self.calibration else None
+                ),
                 "marker_details": {
                     "drift": drift_result,
                     "cadence": cadence_result,
