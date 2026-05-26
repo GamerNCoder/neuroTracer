@@ -27,12 +27,14 @@ class CalibrationModel:
         self.version = data.get("version", "1.0.0")
         self.trained_at = data.get("trained_at", "")
         self.threshold = float(data.get("threshold", 0.5))
+        self.uncertain_margin = float(data.get("uncertain_margin", 0.08))
         self.intercept = float(data["logistic"]["intercept"])
         self.coefficients = {
             m: float(data["logistic"]["coefficients"][m]) for m in MARKERS
         }
         self.marker_weights = data.get("marker_weights", {})
         self.metrics = data.get("metrics", {})
+        self.blog_corpus_eval = data.get("blog_corpus_eval", {})
         self.human_count = int(data.get("human_samples", 0))
         self.ai_count = int(data.get("ai_samples", 0))
 
@@ -43,9 +45,10 @@ class CalibrationModel:
         return _sigmoid(z)
 
     def classify(self, prob_human: float) -> str:
-        if prob_human >= self.threshold + 0.08:
+        m = self.uncertain_margin
+        if prob_human >= self.threshold + m:
             return "likely_human"
-        if prob_human <= self.threshold - 0.08:
+        if prob_human <= self.threshold - m:
             return "likely_ai"
         return "uncertain"
 

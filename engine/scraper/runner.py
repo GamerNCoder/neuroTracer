@@ -5,6 +5,7 @@ Loop scraper: 20 categories × N items via Wayback Machine.
 from __future__ import annotations
 
 import logging
+from datetime import datetime, timezone
 from typing import Callable, Optional
 
 from engine.preprocessing.html_text import extract_text_from_bytes
@@ -29,7 +30,11 @@ class ScrapeRunner:
         max_categories: int = 20,
         min_plaintext_chars: int = 200,
         to_date: str = "20111231",
-        search_multiplier: int = 4,
+        search_multiplier: int = 6,
+        global_target: int | None = None,
+        batch_limit: int | None = None,
+        use_extended_categories: bool = False,
+        batch_id: str | None = None,
     ) -> None:
         self.writer = writer
         self.client = client
@@ -38,6 +43,18 @@ class ScrapeRunner:
         self.min_plaintext_chars = min_plaintext_chars
         self.to_date = to_date
         self.search_multiplier = search_multiplier
+        self.global_target = global_target
+        self.batch_limit = batch_limit
+        self.use_extended_categories = use_extended_categories
+        self.batch_id = batch_id or datetime.now(timezone.utc).strftime("batch-%Y%m%d-%H%M%S")
+        self._run_saved = 0
+
+    def _at_cap(self) -> bool:
+        if self.batch_limit is not None and self._run_saved >= self.batch_limit:
+            return True
+        if self.global_target is not None and self.writer.count_ok() >= self.global_target:
+            return True
+        return False
 
     def run(
         self,
@@ -45,10 +62,15 @@ class ScrapeRunner:
         on_category_start: Optional[Callable[[Category, int], None]] = None,
         on_item_saved: Optional[Callable[[Category, int, int], None]] = None,
     ) -> ScrapeStats:
-        categories = categories_slice(self.max_categories)
+        categories = categories_slice(
+            self.max_categories, extended=self.use_extended_categories
+        )
         stats = ScrapeStats(categories_total=len(categories))
+        start_ok = self.writer.count_ok()
 
         for cat_idx, category in enumerate(categories):
+            if self._at_cap():
+                break
             if on_category_start:
                 on_category_start(category, cat_idx)
             saved = self._scrape_category(category, stats, on_item_saved)
@@ -63,6 +85,18 @@ class ScrapeRunner:
             )
 
         self.writer.write_summary(stats, target_per_category=self.per_category)
+        self.writer.append_batch_log(
+            {
+                "batch_id": self.batch_id,
+                "finished_at": datetime.now(timezone.utc).isoformat(),
+                "saved_this_run": self._run_saved,
+                "corpus_total_ok": self.writer.count_ok(),
+                "started_ok": start_ok,
+                "global_target": self.global_target,
+                "batch_limit": self.batch_limit,
+                "extended_categories": self.use_extended_categories,
+            }
+        )
         return stats
 
     def _scrape_category(
@@ -85,7 +119,7 @@ class ScrapeRunner:
         saved = 0
         item_index = 0
         for cap in captures:
-            if saved >= self.per_category:
+            if saved >= self.per_category or self._at_cap():
                 break
             if self.writer.already_have(category.slug, cap.original_url):
                 stats.items_skipped += 1
@@ -122,6 +156,7 @@ class ScrapeRunner:
                 )
                 saved += 1
                 stats.items_saved += 1
+                self._run_saved += 1
                 if on_item_saved:
                     on_item_saved(category, saved, self.per_category)
 

@@ -51,8 +51,12 @@ class CorpusWriter:
         self.output_dir = output_dir.expanduser().resolve()
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.manifest_path = self.output_dir / "manifest.jsonl"
+        self.batches_path = self.output_dir / "batches.jsonl"
         self._seen_keys: Set[str] = set()
         self._load_existing_keys()
+
+    def count_ok(self) -> int:
+        return len(self._seen_keys)
 
     def _load_existing_keys(self) -> None:
         if not self.manifest_path.exists():
@@ -82,6 +86,10 @@ class CorpusWriter:
         d = self.output_dir / category_slug
         d.mkdir(parents=True, exist_ok=True)
         return d
+
+    def append_batch_log(self, entry: Dict[str, Any]) -> None:
+        with self.batches_path.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
     def append_record(self, record: ScrapeRecord) -> None:
         with self.manifest_path.open("a", encoding="utf-8") as f:

@@ -1,28 +1,29 @@
 {
-  "version": "1.0.0",
-  "trained_at": "2026-05-25T02:31:24.184726+00:00",
-  "source": "blogs-pre2012 + synthetic-ai",
+  "version": "1.1.0",
+  "trained_at": "2026-05-26T00:24:29.184732+00:00",
+  "source": "blogs-pre2012 + synthetic-ai (blog-tuned)",
   "human_samples": 270,
-  "ai_samples": 270,
-  "threshold": 0.48,
+  "ai_samples": 309,
+  "threshold": 0.5787,
+  "uncertain_margin": 0.05,
   "logistic": {
-    "intercept": -3.370922,
+    "intercept": -5.508734,
     "coefficients": {
-      "drift": 0.0077,
-      "cadence": 4.271204,
-      "hedging": -1.053351,
-      "metaphor": 0.312566,
-      "coherence": 5.137432,
-      "stylometry": 0.051738
+      "drift": 0.005744,
+      "cadence": 7.263638,
+      "hedging": -0.844326,
+      "metaphor": 0.841961,
+      "coherence": 5.249631,
+      "stylometry": 0.145012
     }
   },
   "marker_weights": {
-    "drift": 0.0007,
-    "cadence": 0.3942,
-    "hedging": 0.0972,
-    "metaphor": 0.0289,
-    "coherence": 0.4742,
-    "stylometry": 0.0048
+    "drift": 0.0004,
+    "cadence": 0.5062,
+    "hedging": 0.0588,
+    "metaphor": 0.0587,
+    "coherence": 0.3658,
+    "stylometry": 0.0101
   },
   "marker_means_human": {
     "drift": 1.0,
@@ -34,17 +35,29 @@
   },
   "marker_means_ai": {
     "drift": 1.0,
-    "cadence": 0.6499,
-    "hedging": 0.2474,
-    "metaphor": 0.7794,
-    "coherence": 0.0465,
-    "stylometry": 0.9979
+    "cadence": 0.5492,
+    "hedging": 0.245,
+    "metaphor": 0.7416,
+    "coherence": 0.033,
+    "stylometry": 0.9738
   },
   "metrics": {
-    "accuracy": 0.8889,
-    "f1_human": 0.8909,
-    "roc_auc": 0.9342,
-    "test_size": 108,
-    "train_size": 432
+    "accuracy": 0.8966,
+    "roc_auc": 1.0,
+    "test_size": 116
+  },
+  "blog_corpus_eval": {
+    "mean": 0.6983262164544279,
+    "median": 0.6799999999999999,
+    "p10": 0.628417774229521,
+    "p90": 0.7935440745349918,
+    "likely_human_pct": 0.8778
+  },
+  "ai_holdout_eval": {
+    "mean": 0.40450356305423607,
+    "median": 0.4115099919953627,
+    "p10": 0.26981032173792296,
+    "p90": 0.5611963316735961,
+    "likely_human_pct": 0.0
   }
 }

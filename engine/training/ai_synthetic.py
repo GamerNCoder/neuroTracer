@@ -55,16 +55,47 @@ STATIC_AI_SAMPLES: List[str] = [
 ]
 
 
-def _uniform_sentences(text: str, target_len: int = 22) -> str:
-    """Split into chunks of roughly equal word count (AI-like rhythm)."""
+def _strip_human_discourse(text: str) -> str:
+    """Remove markers that inflate coherence/cadence human scores."""
+    t = text
+    for pat in (
+        r"\bhowever\b",
+        r"\bbut\b",
+        r"\bactually\b",
+        r"\bwait\b",
+        r"\bmaybe\b",
+        r"\bperhaps\b",
+        r"\byou know\b",
+        r"\bi mean\b",
+        r"\banyway\b",
+        r"\bwell,\s*",
+        r"\bum\b",
+        r"\buh\b",
+    ):
+        t = re.sub(pat, "", t, flags=re.I)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def _uniform_sentences(text: str, target_len: int = 18) -> str:
+    """Split into chunks of nearly equal word count (AI-like flat cadence)."""
     words = text.split()
-    if len(words) < 40:
-        return text
+    if len(words) < 36:
+        # Pad short texts into three equal-ish sentences
+        n = max(8, len(words) // 3)
+        chunks = []
+        for i in range(0, len(words), max(1, n)):
+            chunk = words[i : i + n]
+            if len(chunk) >= 5:
+                s = " ".join(chunk).strip().capitalize()
+                if s[-1] not in ".!?":
+                    s += "."
+                chunks.append(s)
+        return " ".join(chunks) if chunks else text
     chunks: List[str] = []
     i = 0
     while i < len(words):
         chunk = words[i : i + target_len]
-        if len(chunk) >= 8:
+        if len(chunk) >= 10:
             s = " ".join(chunk).strip()
             if s and s[0].islower():
                 s = s[0].upper() + s[1:]
@@ -83,6 +114,7 @@ def stylize_as_ai(human_text: str, *, seed: int | None = None) -> str:
     t = re.sub(r"\s+", " ", human_text).strip()
     if len(t) > 1200:
         t = t[:1200].rsplit(" ", 1)[0] + "..."
+    t = _strip_human_discourse(t)
 
     # Remove informal contractions
     t = re.sub(r"\bI'm\b", "I am", t, flags=re.I)

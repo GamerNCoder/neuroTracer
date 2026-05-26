@@ -61,7 +61,10 @@ data/**/*.json
 # Scraped corpus (local only; re-run scraper or repair script)
 data/human/blogs-pre2012/**/*.html
 data/human/blogs-pre2012/manifest.jsonl
+data/human/blogs-pre2012/batches.jsonl
 data/human/blogs-pre2012/scrape_summary.json
+data/human/blogs-pre2012/dataset/
+data/human/blogs-pre2012/eval_report.json
 
 # Models & Cache (root /models/ only; data/models/calibration.json is committed)
 /models/

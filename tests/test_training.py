@@ -10,7 +10,7 @@ import pytest
 from engine.humanscore.calibration import load_calibration
 from engine.humanscore.scorer import HumanScoreEngine
 from engine.training.ai_synthetic import stylize_as_ai
-from engine.training.calibrate import train_calibration
+from engine.training.tune_blogs import train_blog_calibration
 
 
 def test_stylize_as_ai_differs():
@@ -28,7 +28,7 @@ def test_train_calibration_small(tmp_path):
     if not (corpus / "manifest.jsonl").exists():
         pytest.skip("blog corpus not present locally")
     out = tmp_path / "calibration.json"
-    result = train_calibration(corpus_dir=corpus, output_path=out, max_human=30)
+    result = train_blog_calibration(corpus_dir=corpus, output_path=out, max_human=30)
     assert out.is_file()
     assert result["human_samples"] >= 20
     assert result["metrics"]["accuracy"] >= 0.5
@@ -41,7 +41,7 @@ def test_scorer_uses_calibration_when_present(tmp_path):
     if not (corpus / "manifest.jsonl").exists():
         pytest.skip("blog corpus not present locally")
     cal_path = tmp_path / "cal.json"
-    train_calibration(corpus_dir=corpus, output_path=cal_path, max_human=25)
+    train_blog_calibration(corpus_dir=corpus, output_path=cal_path, max_human=25)
     engine = HumanScoreEngine(use_calibration=True, calibration_path=cal_path)
     text = (
         "I've been wondering about this for a while. Maybe the answer isn't simple. "
