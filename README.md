@@ -8,6 +8,40 @@
 
 ---
 
+# ✅ Current status (May 2026)
+
+- **Offline scoring**: no OpenAI/Claude/Gemini calls; detection is computed locally from cognitive markers.
+- **Calibrated output**: `data/models/calibration.json` provides `classification`, `confidence`, and `calibrated=true`.
+- **Human corpus**: pre‑2012 blogs scraped via Wayback (`data/human/blogs-pre2012/`).
+- **Batch scraping**: resumable batches toward a larger corpus (e.g. 1000).
+- **Training**: `make tune-blogs` retrains calibration and prints corpus eval.
+
+### Quickstart (local)
+
+```bash
+cd neurotracer
+./setup.sh
+
+# Run API + web together
+make dev-all
+```
+
+- Dashboard: `http://127.0.0.1:3000`
+- API docs: `http://127.0.0.1:8000/docs`
+
+### Data + training commands
+
+```bash
+# Scrape one batch (100) toward 1000 posts
+make scrape-1k
+
+# Export dataset.jsonl + splits (local only)
+make build-dataset
+
+# Retrain blog-tuned calibration and evaluate corpus
+make tune-blogs
+```
+
 # 🧠 **TraceNeuro — Cognitive Authenticity Engine (Human Cognition Fingerprint + Hybrid Detection)**
 
 TraceNeuro is an **LLM-proof Cognitive Authenticity Engine** that identifies human cognitive signatures inside text using *reasoning patterns*, *semantic drift*, *cadence irregularity*, *stylometry*, and *non-linear thought markers*.
